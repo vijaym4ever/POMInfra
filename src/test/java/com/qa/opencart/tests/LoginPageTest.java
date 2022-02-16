@@ -21,7 +21,7 @@ public class LoginPageTest extends BaseTest {
 
 	@Description("login Page Title Test")
 	@Severity(SeverityLevel.MINOR)
-	@Test(enabled = false)
+	@Test
 	public void loginPageTitleTest() {
 		String title = loginPage.getLoginPageTitle();
 		System.out.println("Login page title : " + title);
