@@ -29,11 +29,11 @@
 		</classes>
 	</test>
 
-	<test name="Product Info Page Test">
+	<!-- <test name="Product Info Page Test">
 		<classes>
 			<class name="com.qa.opencart.tests.ProductInfoTest" />
 		</classes>
-	</test>
+	</test> -->
 
 	<!-- <test name="Register Page Test"> <classes> <class name="com.qa.opencart.tests.RegisterPageTest" 
 		/> </classes> </test> -->
