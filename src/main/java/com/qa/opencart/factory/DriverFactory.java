@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Properties;
 
 import javax.imageio.stream.FileImageInputStream;
@@ -14,6 +16,7 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -23,9 +26,10 @@ public class DriverFactory {
 	public WebDriver driver;
 	public Properties prop;
 	public OptionsManager optionsManager;
-	
+
 	public static String highlight;
 	public static ThreadLocal<WebDriver> tlDriver = new ThreadLocal();
+
 	/**
 	 * this method is used to initialize the driver using browser name
 	 * 
@@ -33,29 +37,43 @@ public class DriverFactory {
 	 * @return this returns the webdriver
 	 */
 	public WebDriver init_driver(Properties prop) {
-		
+
 		String browserName = prop.getProperty("browser").trim();
 		highlight = prop.getProperty("highlight").trim();
-		
+
 		System.out.println("browser name is : " + browserName);
 		optionsManager = new OptionsManager(prop);
-		
+
 		if (browserName.equalsIgnoreCase("chrome")) {
-			WebDriverManager.chromedriver().setup();
-			//driver = new ChromeDriver(optionsManager.getChromeOptions());
-			tlDriver.set(new ChromeDriver(optionsManager.getChromeOptions()));
+
+			if (Boolean.parseBoolean(prop.getProperty("remote"))) {
+				// remote execution on grid server:
+				init_remoteDriver("chrome");
+			} else {
+				// local execution:
+				WebDriverManager.chromedriver().setup();
+				tlDriver.set(new ChromeDriver(optionsManager.getChromeOptions()));
+			}
+
 		}
-		
+
 		else if (browserName.equalsIgnoreCase("firefox")) {
-			WebDriverManager.firefoxdriver().setup();
-			//driver = new FirefoxDriver(optionsManager.getFirefoxOptions());
-			tlDriver.set(new FirefoxDriver(optionsManager.getFirefoxOptions()));
+
+			if (Boolean.parseBoolean(prop.getProperty("remote"))) {
+				// remote execution on grid server:
+				init_remoteDriver("firefox");
+			}
+			else {
+				WebDriverManager.firefoxdriver().setup();
+				tlDriver.set(new FirefoxDriver(optionsManager.getFirefoxOptions()));
+			}
 
 		} 
+		
 		else if (browserName.equalsIgnoreCase("safari")) {
-			//driver = new SafariDriver();
 			tlDriver.set(new SafariDriver());
-		}
+		} 
+		
 		else {
 			System.out.println("Please pass the right browser name : " + browserName);
 		}
@@ -65,15 +83,42 @@ public class DriverFactory {
 		getDriver().get(prop.getProperty("url").trim());
 		return getDriver();
 	}
-	
+
+	/**
+	 * run test cases on remote machine
+	 * 
+	 * @param browser
+	 */
+	private void init_remoteDriver(String browser) {
+
+		System.out.println("Running test cases on remote grid server : " + browser);
+
+		if (browser.equals("chrome")) {
+			try {
+				tlDriver.set(
+						new RemoteWebDriver(new URL(prop.getProperty("huburl")), optionsManager.getChromeOptions()));
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}
+		} else if (browser.equals("firefox")) {
+			try {
+				tlDriver.set(
+						new RemoteWebDriver(new URL(prop.getProperty("huburl")), optionsManager.getFirefoxOptions()));
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
+
 	/**
 	 * this will return the thread local copy of the driver
+	 * 
 	 * @return
 	 */
 	public static WebDriver getDriver() {
 		return tlDriver.get();
 	}
-	
 
 	/**
 	 * this method is used to initialize the properties
@@ -92,22 +137,20 @@ public class DriverFactory {
 		}
 		return prop;
 	}
-	
-	
-	//ThreadLocal -- JDK 8 --> create a local copy of driver
-	//set driver with TL
-	//getdriver() -- driver
-	//dribver null problem
-	//u can take ur driver copy anywhere in ur framework
-	//better thread management
-	//to avoid the dead local conditon -- TL driver copy
-	//large test cases count -- 200, 300 TCS --> proper test results
-	
-	
+
+	// ThreadLocal -- JDK 8 --> create a local copy of driver
+	// set driver with TL
+	// getdriver() -- driver
+	// dribver null problem
+	// u can take ur driver copy anywhere in ur framework
+	// better thread management
+	// to avoid the dead local conditon -- TL driver copy
+	// large test cases count -- 200, 300 TCS --> proper test results
+
 	/**
 	 * take screenshot
 	 */
-	public String getScreenshot() {
+	public static String getScreenshot() {
 		File srcFile = ((TakesScreenshot) getDriver()).getScreenshotAs(OutputType.FILE);
 		String path = System.getProperty("user.dir") + "/screenshot/" + System.currentTimeMillis() + ".png";
 		File destination = new File(path);

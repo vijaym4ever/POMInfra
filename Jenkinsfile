@@ -17,7 +17,7 @@ pipeline
             }
             post 
             {
-                success 
+                success
                 {
                     junit '**/target/surefire-reports/TEST-*.xml'
                     archiveArtifacts 'target/*.jar'
@@ -37,6 +37,7 @@ pipeline
                 catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                     git 'https://github.com/naveenanimation20/Nov2021POMSeries.git'
                     sh "mvn clean install"
+                    
                 }
             }
         }
