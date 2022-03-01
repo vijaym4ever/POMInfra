@@ -39,9 +39,11 @@ public class DriverFactory {
 	public WebDriver init_driver(Properties prop) {
 
 		String browserName = prop.getProperty("browser").trim();
+		String browserVersion = prop.getProperty("browserversion").trim();
+
 		highlight = prop.getProperty("highlight").trim();
 
-		System.out.println("browser name is : " + browserName);
+		System.out.println("browser name is : " + browserName + " and browserversion: " + browserVersion);
 		optionsManager = new OptionsManager(prop);
 
 		if (browserName.equalsIgnoreCase("chrome")) {
@@ -62,18 +64,17 @@ public class DriverFactory {
 			if (Boolean.parseBoolean(prop.getProperty("remote"))) {
 				// remote execution on grid server:
 				init_remoteDriver("firefox");
-			}
-			else {
+			} else {
 				WebDriverManager.firefoxdriver().setup();
 				tlDriver.set(new FirefoxDriver(optionsManager.getFirefoxOptions()));
 			}
 
-		} 
-		
+		}
+
 		else if (browserName.equalsIgnoreCase("safari")) {
 			tlDriver.set(new SafariDriver());
-		} 
-		
+		}
+
 		else {
 			System.out.println("Please pass the right browser name : " + browserName);
 		}
@@ -127,15 +128,45 @@ public class DriverFactory {
 	 */
 	public Properties init_prop() {
 		prop = new Properties();
+		FileInputStream ip = null;
+
+		// mvn clean install -Denv="qa"
+		String envName = System.getProperty("env").trim();// qa/stage/dev/prod
+		System.out.println(envName + "-----------");
+
+		System.out.println("Running tests on environment: " + envName);
 		try {
-			FileInputStream ip = new FileInputStream("./src/test/resources/config/config.properties");
+			switch (envName.toLowerCase()) {
+			case "prod":
+				ip = new FileInputStream("./src/test/resources/config/config.properties");
+				break;
+
+			case "qa":
+				ip = new FileInputStream("./src/test/resources/config/qa.config.properties");
+				break;
+
+			case "dev":
+				ip = new FileInputStream("./src/test/resources/config/dev.config.properties");
+				break;
+
+			case "stage":
+				ip = new FileInputStream("./src/test/resources/config/stage.config.properties");
+				break;
+
+			default:
+				System.out.println("Please pass the right environment......");
+				break;
+			}
+		} catch (Exception e) {
+		}
+
+		try {
 			prop.load(ip);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return prop;
+
 	}
 
 	// ThreadLocal -- JDK 8 --> create a local copy of driver
