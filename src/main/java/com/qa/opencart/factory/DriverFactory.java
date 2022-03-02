@@ -131,33 +131,42 @@ public class DriverFactory {
 		FileInputStream ip = null;
 
 		// mvn clean install -Denv="qa"
-		String envName = System.getProperty("env").trim();// qa/stage/dev/prod
-		System.out.println(envName + "-----------");
-
+		String envName = System.getProperty("env");// qa/stage/dev/prod
 		System.out.println("Running tests on environment: " + envName);
-		try {
-			switch (envName.toLowerCase()) {
-			case "prod":
-				ip = new FileInputStream("./src/test/resources/config/config.properties");
-				break;
 
-			case "qa":
+		if (envName == null) {
+			try {
 				ip = new FileInputStream("./src/test/resources/config/qa.config.properties");
-				break;
-
-			case "dev":
-				ip = new FileInputStream("./src/test/resources/config/dev.config.properties");
-				break;
-
-			case "stage":
-				ip = new FileInputStream("./src/test/resources/config/stage.config.properties");
-				break;
-
-			default:
-				System.out.println("Please pass the right environment......");
-				break;
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
 			}
-		} catch (Exception e) {
+		}
+
+		else {
+			try {
+				switch (envName.toLowerCase()) {
+				case "prod":
+					ip = new FileInputStream("./src/test/resources/config/config.properties");
+					break;
+
+				case "qa":
+					ip = new FileInputStream("./src/test/resources/config/qa.config.properties");
+					break;
+
+				case "dev":
+					ip = new FileInputStream("./src/test/resources/config/dev.config.properties");
+					break;
+
+				case "stage":
+					ip = new FileInputStream("./src/test/resources/config/stage.config.properties");
+					break;
+
+				default:
+					System.out.println("Please pass the right environment......");
+					break;
+				}
+			} catch (Exception e) {
+			}
 		}
 
 		try {
