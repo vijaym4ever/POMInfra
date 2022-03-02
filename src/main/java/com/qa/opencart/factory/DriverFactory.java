@@ -135,6 +135,9 @@ public class DriverFactory {
 		System.out.println("Running tests on environment: " + envName);
 
 		if (envName == null) {
+			System.out.println("No env is gievn....hence running it on QA");
+			System.out.println("Running tests on QA environment: " + envName);
+
 			try {
 				ip = new FileInputStream("./src/test/resources/config/qa.config.properties");
 			} catch (FileNotFoundException e) {
