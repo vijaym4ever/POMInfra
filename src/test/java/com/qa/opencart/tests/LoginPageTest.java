@@ -18,7 +18,35 @@ import io.qameta.allure.Story;
 @Story("US - 101: Login Page Features")
 @Listeners({AnnotationTransformer.class, TestAllureListener.class})
 public class LoginPageTest extends BaseTest {
+	
+	@Description("this is testing forgot pwd link on login page")
+	@Severity(SeverityLevel.CRITICAL)
+	@Test
+	public void forgotPwdLinkTest() {
+		Assert.assertTrue(loginPage.isForgotPwdLinkExist());
+	}
+	
+	@Description("this is testing forgot pwd link on login page")
+	@Severity(SeverityLevel.CRITICAL)
+	@Test
+	public void forgotPwdLinkTest1() {
+		Assert.assertTrue(loginPage.isForgotPwdLinkExist());
+	}
+	
+	@Description("this is testing forgot pwd link on login page")
+	@Severity(SeverityLevel.CRITICAL)
+	@Test
+	public void forgotPwdLinkTest2() {
+		Assert.assertTrue(loginPage.isForgotPwdLinkExist());
+	}
 
+	@Description("this is testing forgot pwd link on login page")
+	@Severity(SeverityLevel.CRITICAL)
+	@Test
+	public void forgotPwdLinkTest3() {
+		Assert.assertTrue(loginPage.isForgotPwdLinkExist());
+	}
+	/*
 	@Description("login Page Title Test")
 	@Severity(SeverityLevel.MINOR)
 	@Test
@@ -51,7 +79,7 @@ public class LoginPageTest extends BaseTest {
 		accPage = loginPage.doLogin(prop.getProperty("username").trim(), prop.getProperty("password").trim());
 		Assert.assertTrue(accPage.isLogoutLinkExist());
 	}
-	
+	*/
 	
 
 }

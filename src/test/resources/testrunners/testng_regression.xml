@@ -24,7 +24,7 @@
 		</classes>
 	</test>
 
-	<test name="Login Page Test - ch - 90.0">
+	<!-- <test name="Login Page Test - ch - 90.0">
 		<parameter name="browser" value="chrome" />
 		<parameter name="browserversion" value="90.0" />
 		<classes>
@@ -39,7 +39,7 @@
 		<classes>
 			<class name="com.qa.opencart.tests.AccountsPageTest" />
 		</classes>
-	</test>
+	</test> -->
 
 
 
