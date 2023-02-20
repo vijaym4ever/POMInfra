@@ -50,7 +50,7 @@ public class LoginPage {
 		return new AccountsPage(driver);
 	}
 	
-	@Step("navigating to register page....")
+	@Step("navigating to register page.....")
 	public RegisterPage goToRegisterPage() {
 		eleUtil.doClick(registerLink);
 		return new RegisterPage(driver);
